@@ -52,6 +52,7 @@ extern int yylineno;
 %token INTEGER
 %token FLOAT
 %token STRING
+%token NEWLINE
 
 %type<ival> INTEGER
 %type<fval> FLOAT
@@ -59,20 +60,35 @@ extern int yylineno;
 
 %start mcel
 %%
+
 mcel:
 	| cluster
+	| mcel newline
+	| newline mcel
+	| mcel
+	| newline
 ;
 
 cluster:
-	CLUSTER INTEGER NAME STRING
+	CLUSTER INTEGER name newline corners
 	{
-		printf("ID: %d\n",$2);
-		printf("Name: %s\n",$4);
+		printf("cluster ID: %d\n",$2);
 	};
+
+name:
+	NAME STRING
+	{
+		printf("name: %s\n",$2);
+	};
+
 corners:
-	CORNERS INTEGER
+	CORNERS INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER
 	{
+		printf("corners %d %d %d %d %d %d %d %d %d\n", $2, $3, $4, $5, $6, $7, $8, $9, $10);
 	};
+
+
+newline: NEWLINE;
 
 %%
 
@@ -80,7 +96,21 @@ int yyerror(char *s) {
 	printf("error: %s at %s, line %d\n", s, yytext, yylineno);
 }
 
-int main(void) {
-	yyparse();
+int main(int argc,char *argv[]) {
+	extern FILE *yyin;
+	if(argc>0) {
+		yyin = fopen ( argv[1],"r");
+		if(yyin) {
+			yyparse();
+			fclose(yyin);
+		} else {
+			printf("File %s can not be opened! Exiting!\n",argv[1]);
+			return -1;
+		}
+	} else {
+		printf("No file name given! Exiting!\n");
+		return -1;
+	}
+	return 0;
 }
 
