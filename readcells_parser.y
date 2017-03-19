@@ -1,11 +1,13 @@
 %{
 #include <stdio.h>
+extern char *yytext;
+extern int yylineno;
 %}
 
 %union {
 	int ival;
 	float fval;
-	char sval[2000];
+	char *sval;
 }
 
 %token ADDEQUIV
@@ -58,21 +60,27 @@
 %start mcel
 %%
 mcel:
-	| clusterid
+	| cluster
 ;
 
-clusterid:
-	CLUSTER INTEGER
+cluster:
+	CLUSTER INTEGER NAME STRING
 	{
-		printf("miau\n");
-	}
+		printf("ID: %d\n",$2);
+		printf("Name: %s\n",$4);
+	};
+corners:
+	CORNERS INTEGER
+	{
+	};
 
 %%
 
 int yyerror(char *s) {
-	printf("\n \n yyerror : %s \n \n",s);
+	printf("error: %s at %s, line %d\n", s, yytext, yylineno);
 }
 
 int main(void) {
 	yyparse();
 }
+
