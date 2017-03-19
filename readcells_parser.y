@@ -58,8 +58,16 @@
 %start mcel
 %%
 mcel:
-	| CLUSTER
+	| clusterid
 ;
+
+clusterid:
+	CLUSTER INTEGER
+	{
+		printf("miau %d\n",$2);
+	}
+;
+
 %%
 
 int yyerror(char *s) {

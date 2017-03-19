@@ -14,7 +14,7 @@ aspub				return(ASPUB);
 at					return(AT);
 cellgroup			return(CELLGROUP);
 class				return(CLASS);
-cluster+				return CLUSTER;
+cluster				return CLUSTER;
 connect				return(CONNECT);
 corners				return(CORNERS);
 current				return(CURRENT);
