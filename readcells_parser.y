@@ -58,19 +58,19 @@ extern int yylineno;
 %type<fval> FLOAT
 %type<sval> STRING
 
+%type<sval> name
+
 %start mcel
 %%
 
 mcel:
-	| cluster
-	| mcel newline
-	| newline mcel
-	| mcel
-	| newline
+	cluster
 ;
 
 cluster:
-	CLUSTER INTEGER name newline corners
+	| CLUSTER INTEGER name corners
+	| CLUSTER INTEGER name asplb
+	| CLUSTER INTEGER name aspub
 	{
 		printf("cluster ID: %d\n",$2);
 	};
@@ -82,11 +82,33 @@ name:
 	};
 
 corners:
-	CORNERS INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER
+	newline CORNERS INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER asplb
+	newline CORNERS INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER aspub
 	{
-		printf("corners %d %d %d %d %d %d %d %d %d\n", $2, $3, $4, $5, $6, $7, $8, $9, $10);
+		printf("corners %d %d %d %d %d %d %d %d %d\n", $3, $4, $5, $6, $7, $8, $9, $10, $11);
 	};
 
+asplb:
+	| newline ASPLB FLOAT aspub
+	| ASPLB FLOAT class;
+
+aspub:
+	| newline ASPUB FLOAT asplb
+	| ASPUB FLOAT class;
+
+class:
+	newline CLASS INTEGER orientations;
+
+orientations: ORIENTATIONS INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER softpin;
+
+softpin:
+	| newline SOFTPIN name signal
+
+signal:
+	| SIGNAL STRING softpin
+	{
+		printf("signal: %s\n",$2);
+	};
 
 newline: NEWLINE;
 

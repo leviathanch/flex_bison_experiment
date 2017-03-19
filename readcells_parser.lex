@@ -5,8 +5,8 @@
 blanks		[ \t]+
 newline		[\n]+
 integer		[0-9]+
-identifier		[_a-zA-Z0-9]+
-float			{integer}+'.'+{integer}
+string		[_a-zA-Z0-9<>]+
+float		({integer}+[.]{integer}*)|({integer}*[.]{integer}+)
 
 %%
 addequiv			return ADDEQUIV;
@@ -51,5 +51,5 @@ timing				return TIMING;
 {newline}+			{return NEWLINE;}
 {blanks}+			{};
 {integer}+			{yylval.ival = atoi(yytext); return INTEGER;};
-{identifier}+			{yylval.sval = yytext; return STRING;}
+{string}+			{yylval.sval = yytext; return STRING;}
 {float}+			{yylval.fval = atof(yytext); return FLOAT;}
