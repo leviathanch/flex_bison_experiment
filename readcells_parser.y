@@ -63,8 +63,9 @@ extern int yylineno;
 %start mcel
 %%
 
-mcel:
-	cluster
+mcel:	| mcel
+	| cluster
+	| instance
 ;
 
 cluster:
@@ -109,6 +110,10 @@ signal:
 	{
 		printf("signal: %s\n",$2);
 	};
+
+instance:
+	| newline INSTANCE STRING corners
+	| INSTANCE STRING corners;
 
 newline: NEWLINE;
 
