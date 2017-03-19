@@ -64,9 +64,8 @@ mcel:
 clusterid:
 	CLUSTER INTEGER
 	{
-		printf("miau %d\n",$2);
+		printf("miau\n");
 	}
-;
 
 %%
 
