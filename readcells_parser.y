@@ -63,57 +63,115 @@ extern int yylineno;
 %start mcel
 %%
 
-mcel:	| mcel
+mcel:
 	| cluster
 	| instance
+	| softpin
+	| corners
+	| asplb
+	| aspub
 ;
 
-cluster:
-	| CLUSTER INTEGER name corners
-	| CLUSTER INTEGER name asplb
-	| CLUSTER INTEGER name aspub
-	{
-		printf("cluster ID: %d\n",$2);
-	};
-
-name:
-	NAME STRING
-	{
-		printf("name: %s\n",$2);
-	};
-
-corners:
-	newline CORNERS INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER asplb
-	newline CORNERS INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER aspub
-	{
-		printf("corners %d %d %d %d %d %d %d %d %d\n", $3, $4, $5, $6, $7, $8, $9, $10, $11);
-	};
+addequiv: ADDEQUIV;
 
 asplb:
-	| newline ASPLB FLOAT aspub
-	| ASPLB FLOAT class;
+	| ASPLB FLOAT mcel;
 
 aspub:
-	| newline ASPUB FLOAT asplb
-	| ASPUB FLOAT class;
+	| ASPUB FLOAT mcel;
+
+at: AT;
+
+cellgroup: CELLGROUP;
 
 class:
 	newline CLASS INTEGER orientations;
 
-orientations: ORIENTATIONS INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER softpin;
+cluster:
+	| CLUSTER INTEGER name mcel
+	{
+		printf("cluster ID: %d\n",$2);
+	};
 
-softpin:
-	| newline SOFTPIN name signal
+connect: CONNECT;
+
+corners:
+	| newline CORNERS INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER asplb
+	| newline CORNERS INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER aspub
+	| newline CORNERS INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER asplb
+	| newline CORNERS INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER aspub
+	| newline CORNERS INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER  INTEGER asplb
+	| newline CORNERS INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER  INTEGER aspub
+	{
+		printf("corners %d %d %d %d %d %d %d %d %d\n", $3, $4, $5, $6, $7, $8, $9, $10, $11);
+	};
+
+current: CURRENT;
+
+equiv: EQUIV;
+
+fixed: FIXED;
+
+from	: FROM;
+
+hardcell: HARDCELL;
+
+instance: newline INSTANCE STRING mcel;
+
+keepout: KEEPOUT;
+
+layer: LAYER;
+
+name:
+	| NAME STRING
+	{
+		printf("name: %s\n",$2);
+	};
+
+neighborhood: NEIGHBORHOOD;
+
+no_layer_change: NO_LAYER_CHANGE;
+
+nonfixed : NONFIXED;
+
+nopermute : NOPERMUTE;
+
+orient : ORIENT;
+
+orientations: ORIENTATIONS INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER mcel;
+
+pad : PAD;
+
+padgroup : PADGROUP;
+
+permute : PERMUTE;
+
+pin : PIN;
+
+pin_group : PINGROUP;
+
+power : POWER;
+
+restrict : RESTRICT;
+
+side : SIDE;
+
+sidespace : SIDESPACE;
 
 signal:
-	| SIGNAL STRING softpin
+	| SIGNAL STRING
 	{
 		printf("signal: %s\n",$2);
 	};
 
-instance:
-	| newline INSTANCE STRING corners
-	| INSTANCE STRING corners;
+softcell : SOFTCELL;
+
+softpin:
+	| newline SOFTPIN name signal mcel;
+
+supergroup : SUPERGROUP;
+
+timing : TIMING;
 
 newline: NEWLINE;
 
@@ -140,4 +198,3 @@ int main(int argc,char *argv[]) {
 	}
 	return 0;
 }
-
