@@ -64,31 +64,67 @@ extern int yylineno;
 %%
 
 mcel:
+	| addequiv
+	| asplb
+	| aspub
+	| at
+	| cellgroup
+	| class
 	| cluster
 	| instance
 	| softpin
 	| corners
-	| asplb
-	| aspub
+	| connect
+	| current
+	| equiv
+	| fixed
+	| from
+	| hardcell
+	| instance
+	| keepout
+	| layer
+	| name
+	| neighborhood
+	| no_layer_change
+	| nonfixed
+	| nopermute
+	| orient
+	| orientations
+	| pad
+	| padgroup
+	| permute
+	| pin
+	| pin_group
+	| power
+	| restrict
+	| side
+	| sidespace
+	| signal
+	| softcell
+	| softpin
+	| supergroup
+	| timing
 ;
 
 addequiv: ADDEQUIV;
 
 asplb:
-	| ASPLB FLOAT mcel;
+	| ASPLB FLOAT mcel newline
+	| ASPLB FLOAT;
 
 aspub:
-	| ASPUB FLOAT mcel;
+	| ASPUB FLOAT mcel newline
+	| ASPUB FLOAT;
 
 at: AT;
 
 cellgroup: CELLGROUP;
 
 class:
-	newline CLASS INTEGER orientations;
+	CLASS INTEGER mcel newline;
 
 cluster:
-	| CLUSTER INTEGER name mcel
+	| CLUSTER INTEGER name mcel newline
 	{
 		printf("cluster ID: %d\n",$2);
 	};
