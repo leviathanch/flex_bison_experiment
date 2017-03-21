@@ -61,9 +61,7 @@ extern int yyget_lineno(void);
 %start mcel
 %%
 mcel:
-	| newline
 	| cluster
-	| instance
 ;
 
 addequiv:
@@ -93,7 +91,7 @@ class:
 	};
 
 cluster:
-	| CLUSTER INTEGER name newline corners newline asps newline class orientations newline pins
+	| CLUSTER INTEGER name newline corners newline asps newline class orientations newline pins newline instance
 	{
 		printf("cluster ID: %d\n",$2);
 	};
@@ -144,11 +142,12 @@ hardcell:
 	HARDCELL;
 
 instance:
-	| instance newline
 	| INSTANCE STRING newline corners newline asps newline class orientations newline pins
 	{
 		printf("instance name: %s\n",$2);
-	};
+	}
+	| instance instance
+	| instance newline;
 
 keepout:
 	KEEPOUT;
@@ -190,12 +189,11 @@ permute:
 	PERMUTE;
 
 pins:
-	| pins newline pins
-	| pin
-	| softpin;
-
-pin:
-	PIN name signal;
+	| SOFTPIN name signal
+	| SOFTPIN name signal newline pins
+	| PIN name signal
+	| PIN name signal newline pins
+;
 
 pin_group:
 	PINGROUP;
@@ -221,8 +219,6 @@ signal:
 softcell:
 	SOFTCELL;
 
-softpin:
-	| SOFTPIN name signal;
 
 supergroup:
 	SUPERGROUP;
@@ -231,7 +227,7 @@ timing:
 	TIMING;
 
 newline:
-	| newline newline 
+	| newline newline
 	| NEWLINE;
 
 %%
