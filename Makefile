@@ -4,9 +4,9 @@ all: clean
 	mv readcells_parser.tab.c readcells_parser.y.c
 	#flex readcells_parser.lex
 	flex -d readcells_parser.lex
-	gcc -g -c lex.yy.c -o readcells_parser.lex.o
-	gcc -g -c readcells_parser.y.c -o readcells_parser.y.o
-	gcc -g -o readcells_parser readcells_parser.lex.o readcells_parser.y.o -lfl
+	gcc -g -DYYMAXDEPTH=2000 -c lex.yy.c -o readcells_parser.lex.o
+	gcc -g -DYYMAXDEPTH=2000 -c readcells_parser.y.c -o readcells_parser.y.o
+	gcc -g -DYYMAXDEPTH=2000 -o readcells_parser readcells_parser.lex.o readcells_parser.y.o -lfl
 
 clean:
 	rm -f readcells_parser.lex.o 
