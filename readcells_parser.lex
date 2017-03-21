@@ -1,12 +1,13 @@
 %{
 #include "readcells_parser.h"
+extern int yylineno;
 %}
 
 blanks		[ \t]+
 newline		[\n]+
 integer		[0-9]+
 string		[_a-zA-Z0-9<>]+
-float		({integer}+[.]{integer}*)|({integer}*[.]{integer}+)
+float			({integer}+[.]{integer}*)|({integer}*[.]{integer}+)
 
 %%
 addequiv			return ADDEQUIV;
@@ -48,7 +49,7 @@ softpin				return SOFTPIN;
 supergroup			return SUPERGROUP;
 timing				return TIMING;
 
-{newline}+			{return NEWLINE;}
+{newline}+			{yylineno++; return NEWLINE;}
 {blanks}+			{};
 {integer}+			{yylval.ival = atoi(yytext); return INTEGER;};
 {string}+			{yylval.sval = yytext; return STRING;}

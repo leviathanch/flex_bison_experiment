@@ -1,7 +1,7 @@
 %{
 #include <stdio.h>
 extern char *yytext;
-extern int yylineno;
+extern int yyget_lineno(void);
 %}
 
 %union {
@@ -58,105 +58,103 @@ extern int yylineno;
 %type<fval> FLOAT
 %type<sval> STRING
 
-%type<sval> name
-
 %start mcel
 %%
-
 mcel:
-	| addequiv
-	| asplb
-	| aspub
-	| at
-	| cellgroup
-	| class
+	| newline
 	| cluster
 	| instance
-	| softpin
-	| corners
-	| connect
-	| current
-	| equiv
-	| fixed
-	| from
-	| hardcell
-	| instance
-	| keepout
-	| layer
-	| name
-	| neighborhood
-	| no_layer_change
-	| nonfixed
-	| nopermute
-	| orient
-	| orientations
-	| pad
-	| padgroup
-	| permute
-	| pin
-	| pin_group
-	| power
-	| restrict
-	| side
-	| sidespace
-	| signal
-	| softcell
-	| softpin
-	| supergroup
-	| timing
 ;
 
-addequiv: ADDEQUIV;
+addequiv:
+	ADDEQUIV;
+
+asps:
+	| newline asps
+	| aspub asplb
+	| asplb aspub;
 
 asplb:
-	| ASPLB FLOAT mcel newline
-	| ASPLB FLOAT;
+	ASPLB FLOAT;
 
 aspub:
-	| ASPUB FLOAT mcel newline
-	| ASPUB FLOAT;
+	ASPUB FLOAT;
 
-at: AT;
+at:
+	AT;
 
-cellgroup: CELLGROUP;
+cellgroup:
+	CELLGROUP;
 
 class:
-	CLASS INTEGER mcel newline;
+	| CLASS INTEGER
+	{
+		printf("CLASS: %d\n",$2);
+	};
 
 cluster:
-	| CLUSTER INTEGER name mcel newline
+	| CLUSTER INTEGER name newline corners newline asps newline class orientations newline pins
 	{
 		printf("cluster ID: %d\n",$2);
 	};
 
-connect: CONNECT;
+connect:
+	CONNECT;
 
 corners:
-	| newline CORNERS INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER asplb
-	| newline CORNERS INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER aspub
-	| newline CORNERS INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER asplb
-	| newline CORNERS INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER aspub
-	| newline CORNERS INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER  INTEGER asplb
-	| newline CORNERS INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER  INTEGER aspub
+	| CORNERS
+	INTEGER
+	INTEGER
+	INTEGER
+	INTEGER
+	INTEGER
+	INTEGER
+	INTEGER
+	INTEGER
+	INTEGER
+	INTEGER
+	INTEGER
+	INTEGER
+	INTEGER
+
+	| CORNERS
+	INTEGER
+	INTEGER
+	INTEGER
+	INTEGER
+	INTEGER
+	INTEGER
+	INTEGER
+	INTEGER
+	INTEGER;
+
+current:
+	CURRENT;
+
+equiv:
+	EQUIV;
+
+fixed:
+	FIXED;
+
+from:
+	FROM;
+
+hardcell:
+	HARDCELL;
+
+instance:
+	| instance newline
+	| INSTANCE STRING newline corners newline asps newline class orientations newline pins
 	{
-		printf("corners %d %d %d %d %d %d %d %d %d\n", $3, $4, $5, $6, $7, $8, $9, $10, $11);
+		printf("instance name: %s\n",$2);
 	};
 
-current: CURRENT;
+keepout:
+	KEEPOUT;
 
-equiv: EQUIV;
-
-fixed: FIXED;
-
-from	: FROM;
-
-hardcell: HARDCELL;
-
-instance: newline INSTANCE STRING mcel;
-
-keepout: KEEPOUT;
-
-layer: LAYER;
+layer:
+	LAYER;
 
 name:
 	| NAME STRING
@@ -164,35 +162,55 @@ name:
 		printf("name: %s\n",$2);
 	};
 
-neighborhood: NEIGHBORHOOD;
+neighborhood:
+	NEIGHBORHOOD;
 
-no_layer_change: NO_LAYER_CHANGE;
+no_layer_change:
+	NO_LAYER_CHANGE;
 
-nonfixed : NONFIXED;
+nonfixed:
+	NONFIXED;
 
-nopermute : NOPERMUTE;
+nopermute:
+	NOPERMUTE;
 
-orient : ORIENT;
+orient :
+	ORIENT;
 
-orientations: ORIENTATIONS INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER mcel;
+orientations:
+	| ORIENTATIONS INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER;
 
-pad : PAD;
+pad:
+	PAD;
 
-padgroup : PADGROUP;
+padgroup:
+	PADGROUP;
 
-permute : PERMUTE;
+permute:
+	PERMUTE;
 
-pin : PIN;
+pins:
+	| pins newline pins
+	| pin
+	| softpin;
 
-pin_group : PINGROUP;
+pin:
+	PIN name signal;
 
-power : POWER;
+pin_group:
+	PINGROUP;
 
-restrict : RESTRICT;
+power:
+	POWER;
 
-side : SIDE;
+restrict:
+	RESTRICT;
 
-sidespace : SIDESPACE;
+side:
+	SIDE;
+
+sidespace:
+	SIDESPACE;
 
 signal:
 	| SIGNAL STRING
@@ -200,21 +218,26 @@ signal:
 		printf("signal: %s\n",$2);
 	};
 
-softcell : SOFTCELL;
+softcell:
+	SOFTCELL;
 
 softpin:
-	| newline SOFTPIN name signal mcel;
+	| SOFTPIN name signal;
 
-supergroup : SUPERGROUP;
+supergroup:
+	SUPERGROUP;
 
-timing : TIMING;
+timing:
+	TIMING;
 
-newline: NEWLINE;
+newline:
+	| newline newline 
+	| NEWLINE;
 
 %%
 
 int yyerror(char *s) {
-	printf("error: %s at %s, line %d\n", s, yytext, yylineno);
+	printf("error: %s at %s, line %d\n", s, yytext, yyget_lineno());
 }
 
 int main(int argc,char *argv[]) {
