@@ -91,7 +91,7 @@ class:
 	};
 
 cluster:
-	| CLUSTER INTEGER name newline corners newline asps newline class orientations newline pins newline instance
+	| CLUSTER INTEGER name newline corners newline asps newline class orientations newline softpins newline instance
 	{
 		printf("cluster ID: %d\n",$2);
 	};
@@ -142,7 +142,7 @@ hardcell:
 	HARDCELL;
 
 instance:
-	| INSTANCE STRING newline corners newline asps newline class orientations newline pins
+	| INSTANCE STRING newline corners newline asps newline class orientations newline softpins
 	{
 		printf("instance name: %s\n",$2);
 	}
@@ -188,9 +188,11 @@ padgroup:
 permute:
 	PERMUTE;
 
-pins:
+softpins:
 	| SOFTPIN name signal
-	| SOFTPIN name signal newline pins
+	| SOFTPIN name signal newline softpins
+;
+pins:
 	| PIN name signal
 	| PIN name signal newline pins
 ;
