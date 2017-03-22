@@ -58,12 +58,8 @@ extern int yyget_lineno(void);
 %type<fval> FLOAT
 %type<sval> STRING
 
-%start mcel
+%start cluster
 %%
-mcel:
-	| cluster
-;
-
 addequiv:
 	ADDEQUIV;
 
@@ -85,46 +81,23 @@ cellgroup:
 	CELLGROUP;
 
 class:
-	| CLASS INTEGER
-	{
-		printf("CLASS: %d\n",$2);
-	};
+	| CLASS INTEGER;
 
 cluster:
-	| CLUSTER INTEGER name newline corners newline asps newline class orientations newline softpins newline instance
-	{
-		printf("cluster ID: %d\n",$2);
-	};
+	| CLUSTER INTEGER name newline corners newline asps newline class orientations newline softpin newline instance newline pin;
 
 connect:
 	CONNECT;
 
 corners:
-	| CORNERS
-	INTEGER
-	INTEGER
-	INTEGER
-	INTEGER
-	INTEGER
-	INTEGER
-	INTEGER
-	INTEGER
-	INTEGER
-	INTEGER
-	INTEGER
-	INTEGER
-	INTEGER
+	| CORNERS 	INTEGER nums;
 
-	| CORNERS
-	INTEGER
-	INTEGER
-	INTEGER
-	INTEGER
-	INTEGER
-	INTEGER
-	INTEGER
-	INTEGER
-	INTEGER;
+nums:
+	| INTEGER
+	{printf("number %d\n",$1);}
+	| INTEGER nums
+	{printf("number %d\n",$1);}
+;
 
 current:
 	CURRENT;
@@ -142,10 +115,7 @@ hardcell:
 	HARDCELL;
 
 instance:
-	| INSTANCE STRING newline corners newline asps newline class orientations newline softpins
-	{
-		printf("instance name: %s\n",$2);
-	}
+	| INSTANCE STRING newline corners newline asps newline class orientations newline softpin
 	| instance instance
 	| instance newline;
 
@@ -156,10 +126,7 @@ layer:
 	LAYER;
 
 name:
-	| NAME STRING
-	{
-		printf("name: %s\n",$2);
-	};
+	| NAME STRING;
 
 neighborhood:
 	NEIGHBORHOOD;
@@ -177,7 +144,7 @@ orient :
 	ORIENT;
 
 orientations:
-	| ORIENTATIONS INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER INTEGER;
+	| ORIENTATIONS nums;
 
 pad:
 	PAD;
@@ -188,14 +155,12 @@ padgroup:
 permute:
 	PERMUTE;
 
-softpins:
+softpin:
 	| SOFTPIN name signal
-	| SOFTPIN name signal newline softpins
-;
-pins:
-	| PIN name signal
-	| PIN name signal newline pins
-;
+	| SOFTPIN name signal newline softpin;
+
+pin:
+	| PIN name signal;
 
 pin_group:
 	PINGROUP;
@@ -213,10 +178,7 @@ sidespace:
 	SIDESPACE;
 
 signal:
-	| SIGNAL STRING
-	{
-		printf("signal: %s\n",$2);
-	};
+	| SIGNAL STRING;
 
 softcell:
 	SOFTCELL;
