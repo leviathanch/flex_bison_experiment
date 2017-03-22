@@ -58,8 +58,17 @@ extern int yyget_lineno(void);
 %type<fval> FLOAT
 %type<sval> STRING
 
-%start cluster
+%start mcel
 %%
+mcel:
+	| mcel newline mcel
+	| cluster
+	| pin
+	| instance
+	| pad
+	| padgroup
+;
+
 addequiv:
 	ADDEQUIV;
 
@@ -84,7 +93,16 @@ class:
 	| CLASS INTEGER;
 
 cluster:
-	| CLUSTER INTEGER name newline corners newline asps newline class orientations newline softpin newline instance newline pin;
+	| CLUSTER INTEGER name
+	newline
+	corners
+	newline
+	asps
+	newline
+	class orientations
+	newline
+	softpin
+;
 
 connect:
 	CONNECT;
@@ -115,15 +133,21 @@ hardcell:
 	HARDCELL;
 
 instance:
-	| INSTANCE STRING newline corners newline asps newline class orientations newline softpin
-	| instance instance
-	| instance newline;
+	| INSTANCE STRING
+	newline
+	corners
+	newline
+	asps
+	newline
+	class orientations
+	newline
+	softpin;
 
 keepout:
 	KEEPOUT;
 
 layer:
-	LAYER;
+	LAYER nums;
 
 name:
 	| NAME STRING;
@@ -147,20 +171,29 @@ orientations:
 	| ORIENTATIONS nums;
 
 pad:
-	PAD;
+	PAD INTEGER name newline corners newline pin;
 
 padgroup:
-	PADGROUP;
+	| PADGROUP STRING permute
+	| PADGROUP STRING nopermute
+	| padgroup newline padgroup_member
+;
+
+padgroup_member:
+	| STRING fixed
+	| STRING nonfixed
+	| padgroup_member newline padgroup_member
+;
 
 permute:
 	PERMUTE;
 
 softpin:
 	| SOFTPIN name signal
-	| SOFTPIN name signal newline softpin;
+	| softpin newline softpin;
 
 pin:
-	| PIN name signal;
+	| PIN name signal layer;
 
 pin_group:
 	PINGROUP;

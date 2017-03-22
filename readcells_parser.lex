@@ -6,8 +6,8 @@ extern int yylineno;
 blanks		[ \t]+
 newline		[\n]+
 integer		[0-9]+
-string		[_a-zA-Z0-9<>]+
 float			({integer}+[.]{integer}*)|({integer}*[.]{integer}+)
+string		[_a-zA-Z0-9<>:$]+|[_a-zA-Z<>:$]+[.]
 
 %%
 addequiv			return ADDEQUIV;
