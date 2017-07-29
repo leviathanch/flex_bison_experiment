@@ -235,18 +235,10 @@ int yyerror(char *s) {
 
 int main(int argc,char *argv[]) {
 	extern FILE *yyin;
-	if(argc>0) {
-		yyin = fopen ( argv[1],"r");
-		if(yyin) {
-			yyparse();
-			fclose(yyin);
-		} else {
-			printf("File %s can not be opened! Exiting!\n",argv[1]);
-			return -1;
-		}
-	} else {
-		printf("No file name given! Exiting!\n");
-		return -1;
+	yyin = fopen ( "counter.mcel","r");
+	if(yyin) {
+		yyparse();
+		fclose(yyin);
 	}
 	return 0;
 }
